@@ -493,29 +493,6 @@
         </div>
     </div>
 
-    <!-- Footer ekle (container dışına) -->
-    <footer class="footer mt-auto py-3">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted">
-                    <small>© 2024 Sipariş Yönetim Sistemi</small>
-                </div>
-                <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-sm btn-outline-secondary" 
-                            data-bs-toggle="tooltip" 
-                            data-bs-placement="top" 
-                            title="Aktif Sipariş Sayısı">
-                        <i class="fas fa-shopping-cart me-1"></i>
-                        <span class="badge bg-secondary">{{ siparisler|length }}</span>
-                    </button>
-                    <span class="text-muted">
-                        <small>Son Güncelleme: {{ tarih }}</small>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Tab değiştiğinde verileri güncelle
