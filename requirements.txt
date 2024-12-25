@@ -1,0 +1,9 @@
+flask
+pandas
+pytz
+requests
+beautifulsoup4
+supabase
+html5lib
+python-dotenv
+Werkzeug
