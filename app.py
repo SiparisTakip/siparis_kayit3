@@ -209,6 +209,35 @@ def index():
                         flash(error, 'error')
                         return render_template('index.html', **template_args)
                     else:
+                        # Yeni sipariş bilgilerini tanımla
+                        yeni_siparis = {
+                            'tarih': tarih,
+                            "İSİM SOYİSİM": isim_soyisim,
+                            "İLÇE": ilce_match,
+                            "İL": il_match,
+                            "ADRES": adres_bilgisi,
+                            "TELEFON": telefon,
+                            "ŞUBE KOD": sube_kodu,
+                            "MÜŞTERİ NO": "",
+                            "TUTAR": ucret,
+                            "ÜRÜN": urun_bilgisi,
+                            "MİKTAR": "1",
+                            "GRAM": "800",
+                            "GTÜRÜ": "2",
+                            "ÜCRETTÜRÜ": "6",
+                            "EK HİZMET": " ",
+                            "KDV": "8",
+                            "SİP NO": telefon,
+                            "ÇIKIŞ NO": "",
+                            "SATICI": "",
+                            "HATTAR": "",
+                            "FATTAR": "",
+                            "EN": "10",
+                            "BOY": "15",
+                            "YÜKSEKLİK": "10",
+                            "siparis_durumu": "1",
+                        }
+                        
                         try:
                             response = supabase.table(supabase_DB).insert(yeni_siparis).execute()
                             flash('Sipariş başarıyla kaydedildi', 'success')
