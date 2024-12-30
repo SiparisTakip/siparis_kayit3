@@ -91,6 +91,7 @@ iller = {'Adana': ['Aladağ', 'Ceyhan', 'Çukurova', 'Feke', 'İmamoğlu', 'Kara
 'Düzce': ['Akçakoca', 'Cumayeri', 'Çilimli', 'Gölyaka', 'Gümüşova', 'Kaynaşlı', 'Merkez', 'Yığılca']}
 
 app = Flask(__name__)
+
 app.secret_key = 'your-secret-key-here'
 
 # Supabase bağlantı bilgileri
@@ -131,18 +132,20 @@ def index():
     form_data = None
     siparis = None
     
-    # Aktif siparişleri çek ve sırala
-    data = supabase.table(supabase_DB).select("*").eq("siparis_durumu", "1").order("id", desc=False).execute()
+    # Aktif siparişleri çek (sıralama olmadan)
+    data = supabase.table(supabase_DB).select("*").eq("siparis_durumu", "1").execute()
     siparisler = pd.DataFrame(data.data)
     
-    # Sütun isimlerini düzelt ve sırala
+    # Güncelleme sekmesi için ayrı bir sıralı liste oluştur
     if not siparisler.empty:
         # Sütun isimlerini kontrol et ve düzelt
         if "İSİM SOYİSİM" not in siparisler.columns and "İSİM_SOYİSİM" in siparisler.columns:
             siparisler = siparisler.rename(columns={"İSİM_SOYİSİM": "İSİM SOYİSİM"})
         
-        # İsme göre sırala
-        siparisler = siparisler.sort_values(by="İSİM SOYİSİM")
+        # Güncelleme sekmesi için sıralı kopya oluştur
+        siparisler_guncelleme = siparisler.sort_values(by="İSİM SOYİSİM").copy()
+    else:
+        siparisler_guncelleme = siparisler
 
     if request.method == 'POST':
         action = request.form.get('action')
@@ -154,6 +157,7 @@ def index():
             # Her durumda aynı template'i render et
             template_args = {
                 'siparisler': siparisler.to_dict('records') if not siparisler.empty else [],
+                'siparisler_guncelleme': siparisler_guncelleme.to_dict('records') if not siparisler.empty else [],
                 'siparis': siparis,
                 'form_data': form_data,  # Form verisini gönder
                 'tarih': tarih
@@ -175,7 +179,7 @@ def index():
                         if normalize_text(il) not in [normalize_text(valid_il) for valid_il in iller.keys()]:
                             ilce, il = il, ilce  # İl ve ilçeyi yer değiştir
                         
-                        telefon = lines[3].strip()
+                        telefon = lines[3].strip().replace(" ", "")
                         ucret = lines[4].strip()
                         urun_bilgisi = '\n'.join(lines[6:]).strip()
                     else:
@@ -241,11 +245,10 @@ def index():
                         try:
                             response = supabase.table(supabase_DB).insert(yeni_siparis).execute()
                             flash('Sipariş başarıyla kaydedildi', 'success')
-                            template_args['form_data'] = None  # Başarılı kayıtta formu temizle
+                            return redirect(url_for('index'))  # Başarılı kayıtta yönlendir
                         except Exception as e:
                             flash(f'Kayıt sırasında hata oluştu: {str(e)}', 'error')
-                        
-                        return render_template('index.html', **template_args)
+                            return render_template('index.html', **template_args)
                         
                 except Exception as e:
                     flash(f'Bilgi girişinde hata oluştu: {str(e)}', 'error')
@@ -336,13 +339,15 @@ def index():
                 flash(f'Silme sırasında hata oluştu: {str(e)}', 'error')
                 print(f"Silme hatası detayı: {str(e)}")  # Debug için
 
-        return redirect(url_for('index'))
+        
     
     return render_template('index.html', 
                          siparisler=siparisler.to_dict('records') if not siparisler.empty else [],
+                         siparisler_guncelleme=siparisler_guncelleme.to_dict('records') if not siparisler.empty else [],
                          siparis=siparis,
                          form_data=form_data,
                          tarih=tarih)
 
 if __name__ == '__main__':
-    app.run() 
+    app.run(debug=True)  # Debug modu açık
+    
