@@ -10,14 +10,17 @@
         /* Sistem karanlık mod kontrolü */
         @media (prefers-color-scheme: dark) {
             :root {
-                --primary-color: #2c3e50;
-                --secondary-color: #3498db;
-                --success-color: #2ecc71;
+                --primary-color: #3498db;
+                --secondary-color: #2ecc71;
+                --success-color: #27ae60;
                 --danger-color: #e74c3c;
-                --bg-color: #1a1a1a;
-                --text-color: #ffffff;
-                --card-bg: #2d2d2d;
-                --border-color: #404040;
+                --bg-color: #1e1e2d;
+                --text-color: #e9ecef;
+                --card-bg: #2c2c3c;
+                --border-color: #404050;
+                --hover-bg: #363648;
+                --table-header: #3498db;
+                --table-hover: #2c2c3c;
             }
         }
 
@@ -218,6 +221,296 @@
         .modal-footer {
             border-top-color: var(--border-color);
         }
+
+        /* Karanlık mod için ek stiller */
+        @media (prefers-color-scheme: dark) {
+            .table {
+                color: var(--text-color);
+            }
+
+            .table tbody tr:hover {
+                background-color: var(--hover-bg);
+                color: var(--text-color);
+            }
+
+            .accordion-button {
+                background-color: var(--card-bg);
+                color: var(--text-color);
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .form-control {
+                background-color: var(--card-bg);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            .form-control:focus {
+                background-color: var(--hover-bg);
+                border-color: var(--primary-color);
+                color: var(--text-color);
+            }
+
+            .nav-tabs .nav-link {
+                color: var(--text-color);
+                background-color: var(--card-bg);
+            }
+
+            .nav-tabs .nav-link:hover {
+                background-color: var(--hover-bg);
+                border-color: var(--primary-color);
+            }
+
+            .nav-tabs .nav-link.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .modal-content {
+                background-color: var(--card-bg);
+                color: var(--text-color);
+            }
+
+            .alert {
+                color: var(--text-color);
+            }
+
+            .text-muted {
+                color: #8e9399 !important;
+            }
+
+            /* Tablo stilleri */
+            .table {
+                color: var(--text-color) !important;
+                background-color: var(--card-bg) !important;
+            }
+
+            .table th {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .table td {
+                color: var(--text-color) !important;
+                background-color: var(--card-bg) !important;
+            }
+
+            .table tbody tr:hover td {
+                background-color: var(--hover-bg) !important;
+                color: white !important;
+            }
+
+            /* Form elemanları */
+            input.form-control,
+            textarea.form-control,
+            select.form-control {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            input.form-control:focus,
+            textarea.form-control:focus,
+            select.form-control:focus {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--primary-color) !important;
+                color: var(--text-color) !important;
+                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+            }
+
+            /* Placeholder rengi */
+            ::placeholder {
+                color: #8e9399 !important;
+                opacity: 0.8 !important;
+            }
+
+            /* Accordion içindeki form elemanları */
+            .accordion-body input.form-control,
+            .accordion-body textarea.form-control {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Arama kutusu */
+            #siparisArama {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Input group */
+            .input-group-text {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Accordion ve form stilleri */
+            .accordion-item {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .accordion-button {
+                background-color: var(--hover-bg) !important;
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .accordion-button::after {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+
+            .accordion-body {
+                background-color: var(--card-bg) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Form label ve input stilleri */
+            .form-label {
+                color: var(--text-color) !important;
+            }
+
+            .form-control,
+            .form-control:disabled {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            .form-control:focus {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--primary-color) !important;
+                color: var(--text-color) !important;
+                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+            }
+
+            /* Form grupları */
+            .form-group {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            /* Card stilleri */
+            .card {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .card-header {
+                background-color: var(--hover-bg) !important;
+                border-bottom-color: var(--border-color) !important;
+            }
+
+            .card-body {
+                background-color: var(--card-bg) !important;
+            }
+
+            /* Buton stilleri */
+            .btn-outline-secondary {
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .btn-outline-secondary:hover {
+                background-color: var(--hover-bg) !important;
+                color: white !important;
+            }
+        }
+
+        /* Karanlık mod için modal stilleri */
+        @media (prefers-color-scheme: dark) {
+            .modal-content {
+                background-color: var(--card-bg) !important;
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .modal-header {
+                border-bottom-color: var(--border-color) !important;
+                background-color: var(--hover-bg) !important;
+            }
+
+            .modal-footer {
+                border-top-color: var(--border-color) !important;
+            }
+
+            .modal-body {
+                background-color: var(--card-bg) !important;
+            }
+
+            .modal-title {
+                color: var(--text-color) !important;
+            }
+
+            .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+
+            /* Modal içindeki etiketler ve değerler */
+            .modal-body label {
+                color: var(--text-color) !important;
+                opacity: 0.8;
+            }
+
+            .modal-body p {
+                color: var(--text-color) !important;
+            }
+
+            .modal-body .badge {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .modal-body small.text-muted {
+                color: #8e9399 !important;
+            }
+
+            /* Modal içindeki form elemanları */
+            .modal-body input.form-control,
+            .modal-body textarea.form-control {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+        }
+
+        /* Flash mesajları için stiller */
+        @media (prefers-color-scheme: dark) {
+            .alert-success {
+                background-color: rgba(46, 204, 113, 0.2) !important;
+                border-color: #2ecc71 !important;
+                color: #2ecc71 !important;
+            }
+
+            .alert-error, .alert-danger {
+                background-color: rgba(231, 76, 60, 0.2) !important;
+                border-color: #e74c3c !important;
+                color: #e74c3c !important;
+            }
+
+            .alert-warning {
+                background-color: rgba(241, 196, 15, 0.2) !important;
+                border-color: #f1c40f !important;
+                color: #f1c40f !important;
+            }
+
+            .alert-info {
+                background-color: rgba(52, 152, 219, 0.2) !important;
+                border-color: #3498db !important;
+                color: #3498db !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -282,9 +575,9 @@
                         <h3 class="text-center">Sipariş Güncelle</h3>
                     </div>
                     <div class="card-body">
-                        {% if siparisler %}
+                        {% if siparisler_guncelleme %}
                             <div class="accordion" id="siparisAccordion">
-                                {% for siparis in siparisler %}
+                                {% for siparis in siparisler_guncelleme %}
                                 <div class="accordion-item mb-2">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
@@ -546,6 +839,26 @@
             const modal = new bootstrap.Modal(document.getElementById('siparisDetayModal'));
             modal.show();
         }
+
+        // Flash mesajlarını otomatik gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            var alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    var fadeEffect = setInterval(function () {
+                        if (!alert.style.opacity) {
+                            alert.style.opacity = 1;
+                        }
+                        if (alert.style.opacity > 0) {
+                            alert.style.opacity -= 0.1;
+                        } else {
+                            clearInterval(fadeEffect);
+                            alert.style.display = 'none';
+                        }
+                    }, 50);
+                }, 3000); // 3 saniye sonra kaybolmaya başlar
+            });
+        });
     </script>
 </body>
 </html> 
