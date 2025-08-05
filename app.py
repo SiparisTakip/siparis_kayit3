@@ -102,7 +102,7 @@ supabase_DB = "siparislistesi"
 # Kargo bilgileri
 kullanici_Adi = "seffafbutik@yesilkar.com"
 sifre = "Ma123456"
-sube_kodu = "SUL"
+sube_kodu = "YUL"
 
 # Supabase Client oluştur
 supabase: Client = create_client(url, key)
@@ -351,3 +351,4 @@ def index():
 if __name__ == '__main__':
     app.run(debug=True)  # Debug modu açık
     
+
