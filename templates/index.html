@@ -811,7 +811,23 @@
         }
 
         // Her 30 saniyede bir verileri otomatik yenile
-        setInterval(refreshData, 50000);
+        function autoRefreshControl() {
+            const activeTab = document.querySelector('.nav-link.active');
+    
+        if (activeTab) {
+        const target = activeTab.getAttribute('data-bs-target');
+
+        // Güncelleme sekmesi açıkken yenileme yapma
+            if (target === '#guncelle') {
+                return;
+        }
+    }
+
+        refreshData();
+}
+
+    // 50 saniyede bir kontrol et
+    setInterval(autoRefreshControl, 50000);
 
         // Siparişleri filtrele
         function siparisleriFiltrele() {
