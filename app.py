@@ -240,6 +240,7 @@ def index():
                             "BOY": "15",
                             "YÜKSEKLİK": "10",
                             "siparis_durumu": "1",
+                            "onay_profil":"tel7"
                         }
                         
                         try:
