@@ -1,644 +1,880 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sevkiyat Masası · SOLE&amp;CO</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-/* ============ TOKENS ============ */
-:root{
-  --ink:#0F1319;
-  --panel:#171D26;
-  --panel-raised:#1E2632;
-  --line:#2A323F;
-  --text:#ECEFF3;
-  --text-dim:#8D97A6;
-  --amber:#FF9F45;
-  --amber-dim:#7A5330;
-  --mint:#34D7A6;
-  --mint-dim:#17493C;
-  --rose:#FF5D5D;
-  --rose-dim:#4A2323;
-  --paper:#F4EFE6;
-  --paper-ink:#2B2621;
-  --radius:10px;
-  --shadow:0 8px 24px rgba(0,0,0,.35);
-  font-size:16px;
-}
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  background:var(--ink);
-  color:var(--text);
-  font-family:'Inter',system-ui,sans-serif;
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
-::selection{background:var(--amber-dim);color:var(--text);}
-:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:4px;}
-h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-.01em;}
-.mono{font-family:'IBM Plex Mono',monospace;}
-a{color:inherit;}
-@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important;}}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sipariş Yönetimi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Sistem karanlık mod kontrolü */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3498db;
+                --secondary-color: #2ecc71;
+                --success-color: #27ae60;
+                --danger-color: #e74c3c;
+                --bg-color: #1e1e2d;
+                --text-color: #e9ecef;
+                --card-bg: #2c2c3c;
+                --border-color: #404050;
+                --hover-bg: #363648;
+                --table-header: #3498db;
+                --table-hover: #2c2c3c;
+            }
+        }
 
-/* ============ SHELL ============ */
-.shell{display:flex;min-height:100vh;}
+        @media (prefers-color-scheme: light) {
+            :root {
+                --primary-color: #2c3e50;
+                --secondary-color: #3498db;
+                --success-color: #2ecc71;
+                --danger-color: #e74c3c;
+                --bg-color: #f5f6fa;
+                --text-color: #333333;
+                --card-bg: #ffffff;
+                --border-color: #dee2e6;
+            }
+        }
 
-/* ---- Sidebar ---- */
-.sidebar{
-  width:236px;flex-shrink:0;
-  background:var(--panel);
-  border-right:1px solid var(--line);
-  display:flex;flex-direction:column;
-  padding:22px 14px;
-  position:sticky;top:0;height:100vh;
-}
-.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 22px;}
-.brand-mark{
-  width:34px;height:34px;border-radius:8px;
-  background:linear-gradient(155deg,var(--amber),#c9691f);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;box-shadow:0 4px 10px rgba(255,159,69,.25);
-}
-.brand-mark svg{width:18px;height:18px;stroke:#1a1206;}
-.brand-text h1{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.1;}
-.brand-text span{font-size:.72rem;color:var(--text-dim);letter-spacing:.04em;text-transform:uppercase;}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-.stat-strip{
-  background:var(--panel-raised);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:12px 14px;margin-bottom:20px;
-}
-.stat-strip .num{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:700;color:var(--mint);line-height:1;}
-.stat-strip .lbl{font-size:.74rem;color:var(--text-dim);margin-top:4px;}
+        .container {
+            max-width: 1200px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
 
-nav.tabs{display:flex;flex-direction:column;gap:4px;flex:1;}
-.tab-btn{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 12px;border-radius:8px;
-  background:transparent;border:1px solid transparent;
-  color:var(--text-dim);font-size:.92rem;font-weight:500;
-  cursor:pointer;text-align:left;width:100%;
-  transition:background .15s,color .15s,border-color .15s;
-}
-.tab-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0;}
-.tab-btn:hover{background:var(--panel-raised);color:var(--text);}
-.tab-btn.active{background:var(--panel-raised);color:var(--amber);border-color:var(--line);}
-.tab-btn.danger.active,.tab-btn.danger:hover{color:var(--rose);}
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
 
-.sidebar-foot{padding-top:14px;border-top:1px solid var(--line);margin-top:14px;}
-.sidebar-foot p{font-size:.72rem;color:var(--text-dim);margin:0;line-height:1.5;}
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px;
+        }
 
-/* ---- Main ---- */
-main{flex:1;padding:32px 40px 60px;max-width:1180px;}
-.page-head{margin-bottom:26px;}
-.page-head .eyebrow{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:600;}
-.page-head h2{font-size:1.7rem;margin-top:4px;}
-.page-head p{color:var(--text-dim);margin:6px 0 0;font-size:.92rem;}
+        .nav-tabs {
+            border-bottom: 2px solid var(--primary-color);
+            gap: 5px;
+        }
 
-.panel{display:none;}
-.panel.active{display:block;animation:fadeIn .25s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+        .nav-tabs .nav-link {
+            color: var(--text-color);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s ease;
+            margin-bottom: -2px;
+        }
 
-.card{
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:var(--radius);box-shadow:var(--shadow);
-}
-.card + .card{margin-top:20px;}
-.card-body{padding:22px;}
+        .nav-tabs .nav-link:hover {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
 
-/* ============ TOASTS ============ */
-.toast-stack{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:340px;}
-.toast{
-  background:var(--panel-raised);border:1px solid var(--line);border-left:3px solid var(--mint);
-  border-radius:8px;padding:12px 14px;font-size:.87rem;box-shadow:var(--shadow);
-  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
-  animation:slideIn .25s ease;
-}
-.toast.error{border-left-color:var(--rose);}
-.toast.success{border-left-color:var(--mint);}
-.toast button{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:1rem;line-height:1;padding:0;}
-@keyframes slideIn{from{opacity:0;transform:translateX(12px);}to{opacity:1;transform:none;}}
+        .nav-tabs .nav-link.active {
+            color: white;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-bottom: none;
+        }
 
-/* ============ NEW ORDER : SPLIT ============ */
-.split{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
-label.field-label{display:block;font-size:.78rem;color:var(--text-dim);margin-bottom:8px;letter-spacing:.02em;}
-textarea,input[type=text]{
-  width:100%;background:var(--panel-raised);border:1px solid var(--line);
-  color:var(--text);border-radius:8px;padding:11px 13px;font-size:.94rem;
-  font-family:'Inter',sans-serif;transition:border-color .15s,box-shadow .15s;
-}
-textarea:focus,input[type=text]:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,159,69,.15);outline:none;}
-#text_input{font-family:'IBM Plex Mono',monospace;font-size:.86rem;min-height:230px;line-height:1.6;resize:vertical;}
-.hint{font-size:.76rem;color:var(--text-dim);margin-top:8px;line-height:1.5;}
-.hint b{color:var(--text);}
+        .form-control {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-color);
+            border-radius: 5px;
+            padding: 10px;
+            transition: all 0.3s ease;
+        }
 
-.btn{
-  border:none;border-radius:8px;padding:11px 22px;font-weight:600;font-size:.9rem;
-  cursor:pointer;transition:transform .1s,filter .15s;font-family:'Inter',sans-serif;
-}
-.btn:active{transform:translateY(1px);}
-.btn-amber{background:var(--amber);color:#1a1206;}
-.btn-amber:hover{filter:brightness(1.08);}
-.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--text);}
-.btn-ghost:hover{background:var(--panel-raised);}
-.btn-rose{background:var(--rose);color:#2a0d0d;}
-.btn-rose:hover{filter:brightness(1.08);}
-.btn-sm{padding:7px 14px;font-size:.82rem;}
-.btn-row{display:flex;gap:10px;margin-top:16px;}
+        .form-control:focus {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
 
-/* ---- Ticket (signature element) ---- */
-.ticket-wrap{position:sticky;top:20px;}
-.ticket{
-  background:var(--paper);color:var(--paper-ink);border-radius:6px;
-  position:relative;overflow:hidden;box-shadow:var(--shadow);
-}
-.ticket-head{
-  padding:14px 16px 12px;display:flex;justify-content:space-between;align-items:flex-start;
-  border-bottom:2px dashed rgba(43,38,33,.35);
-}
-.ticket-head .t-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;opacity:.6;}
-.ticket-head h3{font-size:1rem;margin-top:2px;}
-.status-pill{
-  font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:600;letter-spacing:.05em;
-  padding:4px 9px;border-radius:20px;text-transform:uppercase;white-space:nowrap;
-  background:rgba(43,38,33,.12);color:rgba(43,38,33,.55);transition:background .2s,color .2s;
-}
-.status-pill.ready{background:var(--mint-dim);color:var(--mint);}
-.ticket-body{padding:14px 16px 6px;}
-.t-row{margin-bottom:12px;}
-.t-row .k{font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;opacity:.55;display:block;margin-bottom:3px;}
-.t-row .v{font-size:.88rem;font-weight:500;word-break:break-word;min-height:1.1em;}
-.t-row .v.empty{opacity:.32;font-weight:400;}
-.t-row .v.mono{font-family:'IBM Plex Mono',monospace;}
-.ticket-barcode{
-  height:30px;margin:6px 16px 0;
-  background-image:repeating-linear-gradient(90deg,rgba(43,38,33,.75) 0 2px,transparent 2px 5px,rgba(43,38,33,.75) 5px 6px,transparent 6px 11px,rgba(43,38,33,.75) 11px 14px,transparent 14px 18px);
-  opacity:.5;
-}
-.ticket-foot{padding:8px 16px 14px;font-family:'IBM Plex Mono',monospace;font-size:.64rem;opacity:.45;text-align:center;letter-spacing:.04em;}
+        .btn {
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
 
-/* ============ SEARCH ============ */
-.search-bar{
-  display:flex;align-items:center;gap:8px;background:var(--panel-raised);
-  border:1px solid var(--line);border-radius:8px;padding:9px 13px;max-width:320px;
-}
-.search-bar svg{width:15px;height:15px;stroke:var(--text-dim);flex-shrink:0;}
-.search-bar input{background:none;border:none;color:var(--text);font-size:.88rem;width:100%;}
-.search-bar input:focus{outline:none;}
-.card-header-row{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:10px;}
-.card-header-row h3{font-size:1.05rem;}
-.count-badge{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--text-dim);background:var(--panel-raised);padding:3px 9px;border-radius:20px;margin-left:8px;}
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
 
-/* ============ TABLE ============ */
-.table-wrap{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;font-size:.87rem;}
-thead th{
-  text-align:left;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--text-dim);font-weight:600;padding:12px 16px;border-bottom:1px solid var(--line);
-  background:var(--panel-raised);
-}
-tbody td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:middle;}
-tbody tr:hover{background:var(--panel-raised);}
-tbody tr:last-child td{border-bottom:none;}
-.td-name{font-weight:600;}
-.td-addr{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-dim);}
-.td-amount{font-family:'IBM Plex Mono',monospace;color:var(--mint);font-weight:600;}
-.empty-state{padding:52px 20px;text-align:center;color:var(--text-dim);}
-.empty-state svg{width:34px;height:34px;stroke:var(--text-dim);margin-bottom:10px;}
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
 
-/* ============ UPDATE PANEL ============ */
-.order-item{border-bottom:1px solid var(--line);}
-.order-item:last-child{border-bottom:none;}
-.order-item summary{
-  list-style:none;cursor:pointer;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;
-}
-.order-item summary::-webkit-details-marker{display:none;}
-.order-item summary .os-left{display:flex;align-items:center;gap:12px;min-width:0;}
-.order-item summary .os-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.order-item summary .os-sub{color:var(--text-dim);font-size:.78rem;font-family:'IBM Plex Mono',monospace;white-space:nowrap;}
-.order-item summary .chev{width:16px;height:16px;stroke:var(--text-dim);flex-shrink:0;transition:transform .2s;}
-.order-item[open] summary .chev{transform:rotate(90deg);}
-.order-item summary:hover{background:var(--panel-raised);}
-.order-edit-body{padding:6px 22px 22px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media (max-width:720px){.grid-2{grid-template-columns:1fr;}}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:.76rem;color:var(--text-dim);margin-bottom:6px;}
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
 
-/* ============ MODAL ============ */
-.modal-overlay{
-  position:fixed;inset:0;background:rgba(6,8,11,.6);backdrop-filter:blur(2px);
-  display:none;align-items:flex-start;justify-content:flex-end;z-index:300;
-}
-.modal-overlay.open{display:flex;}
-.modal-panel{
-  width:min(420px,92vw);height:100%;background:var(--panel);border-left:1px solid var(--line);
-  padding:26px;overflow-y:auto;animation:slidePanel .25s ease;
-}
-@keyframes slidePanel{from{transform:translateX(20px);opacity:0;}to{transform:none;opacity:1;}}
-.modal-close{background:none;border:none;color:var(--text-dim);font-size:1.3rem;cursor:pointer;line-height:1;}
-.modal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;}
+        .btn-danger:hover {
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
 
-/* ============ FOOT (toplu sil) ============ */
-.danger-zone{border:1px solid var(--rose-dim);background:rgba(255,93,93,.05);}
-.danger-zone .card-body{text-align:center;padding:40px 22px;}
-.danger-zone svg{width:32px;height:32px;stroke:var(--rose);margin-bottom:12px;}
-.danger-zone p{color:var(--text-dim);max-width:420px;margin:8px auto 22px;font-size:.9rem;}
+        .accordion-item {
+            border: none;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
 
-/* ============ MOBILE ============ */
-@media (max-width:900px){
-  .shell{flex-direction:column;}
-  .sidebar{
-    width:100%;height:auto;position:relative;flex-direction:row;
-    align-items:center;padding:12px 16px;overflow-x:auto;
-  }
-  .brand{padding:0;margin-right:14px;}
-  .stat-strip,.sidebar-foot{display:none;}
-  nav.tabs{flex-direction:row;flex:none;}
-  .tab-btn span{display:none;}
-  .tab-btn{padding:9px;}
-  main{padding:22px 16px 50px;}
-  .split{grid-template-columns:1fr;}
-  .ticket-wrap{position:static;}
-}
-</style>
+        .accordion-button {
+            background-color: white;
+            padding: 15px;
+            font-weight: 500;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(52, 152, 219, 0.25);
+        }
+
+        .table {
+            color: var(--text-color);
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 12px;
+        }
+
+        .alert {
+            border-radius: 5px;
+            border: none;
+        }
+
+        /* Mobil uyumluluk */
+        @media (max-width: 768px) {
+            .nav-tabs .nav-link {
+                padding: 10px 15px;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            /* Mobilde sekmeleri daha kompakt hale getir */
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .nav-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-tabs .nav-item {
+                flex: 0 0 auto;
+            }
+        }
+
+        /* Modal için karanlık mod */
+        .modal-content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .modal-header {
+            border-bottom-color: var(--border-color);
+        }
+
+        .modal-footer {
+            border-top-color: var(--border-color);
+        }
+
+        /* Karanlık mod için ek stiller */
+        @media (prefers-color-scheme: dark) {
+            .table {
+                color: var(--text-color);
+            }
+
+            .table tbody tr:hover {
+                background-color: var(--hover-bg);
+                color: var(--text-color);
+            }
+
+            .accordion-button {
+                background-color: var(--card-bg);
+                color: var(--text-color);
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .form-control {
+                background-color: var(--card-bg);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            .form-control:focus {
+                background-color: var(--hover-bg);
+                border-color: var(--primary-color);
+                color: var(--text-color);
+            }
+
+            .nav-tabs .nav-link {
+                color: var(--text-color);
+                background-color: var(--card-bg);
+            }
+
+            .nav-tabs .nav-link:hover {
+                background-color: var(--hover-bg);
+                border-color: var(--primary-color);
+            }
+
+            .nav-tabs .nav-link.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .modal-content {
+                background-color: var(--card-bg);
+                color: var(--text-color);
+            }
+
+            .alert {
+                color: var(--text-color);
+            }
+
+            .text-muted {
+                color: #8e9399 !important;
+            }
+
+            /* Tablo stilleri */
+            .table {
+                color: var(--text-color) !important;
+                background-color: var(--card-bg) !important;
+            }
+
+            .table th {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .table td {
+                color: var(--text-color) !important;
+                background-color: var(--card-bg) !important;
+            }
+
+            .table tbody tr:hover td {
+                background-color: var(--hover-bg) !important;
+                color: white !important;
+            }
+
+            /* Form elemanları */
+            input.form-control,
+            textarea.form-control,
+            select.form-control {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            input.form-control:focus,
+            textarea.form-control:focus,
+            select.form-control:focus {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--primary-color) !important;
+                color: var(--text-color) !important;
+                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+            }
+
+            /* Placeholder rengi */
+            ::placeholder {
+                color: #8e9399 !important;
+                opacity: 0.8 !important;
+            }
+
+            /* Accordion içindeki form elemanları */
+            .accordion-body input.form-control,
+            .accordion-body textarea.form-control {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Arama kutusu */
+            #siparisArama {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Input group */
+            .input-group-text {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Accordion ve form stilleri */
+            .accordion-item {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .accordion-button {
+                background-color: var(--hover-bg) !important;
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .accordion-button::after {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+
+            .accordion-body {
+                background-color: var(--card-bg) !important;
+                color: var(--text-color) !important;
+            }
+
+            /* Form label ve input stilleri */
+            .form-label {
+                color: var(--text-color) !important;
+            }
+
+            .form-control,
+            .form-control:disabled {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+
+            .form-control:focus {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--primary-color) !important;
+                color: var(--text-color) !important;
+                box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25) !important;
+            }
+
+            /* Form grupları */
+            .form-group {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            /* Card stilleri */
+            .card {
+                background-color: var(--card-bg) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .card-header {
+                background-color: var(--hover-bg) !important;
+                border-bottom-color: var(--border-color) !important;
+            }
+
+            .card-body {
+                background-color: var(--card-bg) !important;
+            }
+
+            /* Buton stilleri */
+            .btn-outline-secondary {
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .btn-outline-secondary:hover {
+                background-color: var(--hover-bg) !important;
+                color: white !important;
+            }
+        }
+
+        /* Karanlık mod için modal stilleri */
+        @media (prefers-color-scheme: dark) {
+            .modal-content {
+                background-color: var(--card-bg) !important;
+                color: var(--text-color) !important;
+                border-color: var(--border-color) !important;
+            }
+
+            .modal-header {
+                border-bottom-color: var(--border-color) !important;
+                background-color: var(--hover-bg) !important;
+            }
+
+            .modal-footer {
+                border-top-color: var(--border-color) !important;
+            }
+
+            .modal-body {
+                background-color: var(--card-bg) !important;
+            }
+
+            .modal-title {
+                color: var(--text-color) !important;
+            }
+
+            .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+
+            /* Modal içindeki etiketler ve değerler */
+            .modal-body label {
+                color: var(--text-color) !important;
+                opacity: 0.8;
+            }
+
+            .modal-body p {
+                color: var(--text-color) !important;
+            }
+
+            .modal-body .badge {
+                background-color: var(--primary-color) !important;
+                color: white !important;
+            }
+
+            .modal-body small.text-muted {
+                color: #8e9399 !important;
+            }
+
+            /* Modal içindeki form elemanları */
+            .modal-body input.form-control,
+            .modal-body textarea.form-control {
+                background-color: var(--hover-bg) !important;
+                border-color: var(--border-color) !important;
+                color: var(--text-color) !important;
+            }
+        }
+
+        /* Flash mesajları için stiller */
+        @media (prefers-color-scheme: dark) {
+            .alert-success {
+                background-color: rgba(46, 204, 113, 0.2) !important;
+                border-color: #2ecc71 !important;
+                color: #2ecc71 !important;
+            }
+
+            .alert-error, .alert-danger {
+                background-color: rgba(231, 76, 60, 0.2) !important;
+                border-color: #e74c3c !important;
+                color: #e74c3c !important;
+            }
+
+            .alert-warning {
+                background-color: rgba(241, 196, 15, 0.2) !important;
+                border-color: #f1c40f !important;
+                color: #f1c40f !important;
+            }
+
+            .alert-info {
+                background-color: rgba(52, 152, 219, 0.2) !important;
+                border-color: #3498db !important;
+                color: #3498db !important;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<div class="toast-stack" id="toastStack">
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, message in messages %}
-    <div class="toast {{ 'success' if category == 'success' else 'error' }}">
-      <span>{{ message }}</span>
-      <button onclick="this.parentElement.remove()" aria-label="Kapat">&times;</button>
-    </div>
-  {% endfor %}
-{% endwith %}
-</div>
-
-<div class="shell">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-mark">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M3 15c0-1.5 1-2 2-2.5 2-1 3-1 5-2.5 1.5-1.1 3-2 5-2 3 0 6 1.5 6 4.5V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3Z" stroke-width="1.6" stroke="currentColor"/><path d="M3 17h18" stroke-width="1.6" stroke="currentColor"/></svg>
-      </div>
-      <div class="brand-text">
-        <h1>SOLE&amp;CO</h1>
-        <span>Sevkiyat Masası</span>
-      </div>
-    </div>
-
-    <div class="stat-strip">
-      <div class="num">{{ siparisler|length }}</div>
-      <div class="lbl">bekleyen sipariş</div>
-    </div>
-
-    <nav class="tabs">
-      <button class="tab-btn active" data-panel="siparis" onclick="showPanel('siparis',this)">
-        <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-        <span>Yeni Sipariş</span>
-      </button>
-      <button class="tab-btn" data-panel="guncelle" onclick="showPanel('guncelle',this)">
-        <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z" stroke-linejoin="round"/><path d="M13 7l4 4" stroke-linecap="round"/></svg>
-        <span>Güncelle</span>
-      </button>
-      <button class="tab-btn" data-panel="siparisler" onclick="showPanel('siparisler',this)">
-        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round"/></svg>
-        <span>Siparişler</span>
-      </button>
-      <button class="tab-btn danger" data-panel="toplu-sil" onclick="showPanel('toplu-sil',this)">
-        <svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span>Tümünü Sil</span>
-      </button>
-    </nav>
-
-    <div class="sidebar-foot">
-      <p>{{ tarih }}</p>
-    </div>
-  </aside>
-
-  <main>
-    <!-- ============ PANEL: YENİ SİPARİŞ ============ -->
-    <div class="panel active" id="panel-siparis">
-      <div class="page-head">
-        <div class="eyebrow">Kayıt</div>
-        <h2>Yeni sipariş gir</h2>
-        <p>Müşteri mesajını olduğu gibi yapıştır — sağdaki fiş otomatik doldurulsun.</p>
-      </div>
-
-      <div class="split">
-        <div class="card">
-          <div class="card-body">
-            <form method="POST" action="{{ url_for('index') }}">
-              <input type="hidden" name="action" value="yeni_siparis">
-              <label class="field-label" for="text_input">Ham sipariş metni</label>
-              <textarea id="text_input" name="text_input" required
-                        oninput="fisiGuncelle(this.value)"
-                        placeholder="Ahmet Yılmaz&#10;Örnek Mah. Örnek Sk. No:5&#10;Kadıköy İstanbul&#10;05551234567&#10;450 TL&#10;&#10;36 Numara Spor Ayakkabı">{% if form_data %}{{ form_data }}{% endif %}</textarea>
-              <p class="hint"><b>Sıra:</b> 1) Ad Soyad 2) Adres 3) İlçe İl 4) Telefon 5) Ücret 6) (boş) 7) Ürün</p>
-              <div class="btn-row">
-                <button type="submit" class="btn btn-amber">Siparişi Kaydet</button>
-                <button type="button" class="btn btn-ghost" onclick="document.getElementById('text_input').value='';fisiGuncelle('');">Temizle</button>
-              </div>
-            </form>
-          </div>
-        </div>
-
-        <div class="ticket-wrap">
-          <div class="ticket">
-            <div class="ticket-head">
-              <div>
-                <div class="t-eyebrow">Kargo Fişi</div>
-                <h3 id="tk-name">—</h3>
-              </div>
-              <span class="status-pill" id="tk-status">Bekliyor</span>
-            </div>
-            <div class="ticket-body">
-              <div class="t-row"><span class="k">Adres</span><span class="v empty" id="tk-adres">—</span></div>
-              <div class="t-row"><span class="k">İlçe / İl</span><span class="v empty" id="tk-ilceil">—</span></div>
-              <div class="t-row"><span class="k">Telefon</span><span class="v mono empty" id="tk-tel">—</span></div>
-              <div class="t-row"><span class="k">Ücret</span><span class="v mono empty" id="tk-ucret">—</span></div>
-              <div class="t-row"><span class="k">Ürün</span><span class="v empty" id="tk-urun">—</span></div>
-            </div>
-            <div class="ticket-barcode"></div>
-            <div class="ticket-foot">SOLE&amp;CO · YUL ŞUBE</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ============ PANEL: GÜNCELLE ============ -->
-    <div class="panel" id="panel-guncelle">
-      <div class="page-head">
-        <div class="eyebrow">Düzenleme</div>
-        <h2>Sipariş güncelle</h2>
-        <p>Bir siparişe tıkla, bilgileri düzelt veya kaydı kapat.</p>
-      </div>
-
-      <div class="card">
-        <div class="card-header-row">
-          <h3>Bekleyen kayıtlar <span class="count-badge">{{ siparisler_guncelleme|length }}</span></h3>
-          <div class="search-bar">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="M21 21l-4.3-4.3" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <input type="text" id="guncelleArama" placeholder="İsimle ara..." onkeyup="filtreleListe('guncelleArama','guncelle-satir')">
-          </div>
-        </div>
-
-        {% if siparisler_guncelleme %}
-          {% for siparis in siparisler_guncelleme %}
-          <details class="order-item guncelle-satir">
-            <summary>
-              <div class="os-left">
-                <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                <span class="os-name">{{ siparis['İSİM SOYİSİM'] }}</span>
-              </div>
-              <span class="os-sub">{{ siparis.İLÇE }}/{{ siparis.İL }} · {{ siparis.TUTAR }}</span>
-            </summary>
-            <div class="order-edit-body">
-              <form method="POST" action="{{ url_for('index') }}">
-                <input type="hidden" name="action" value="guncelle_siparis">
-                <input type="hidden" name="siparis_id" value="{{ siparis.id }}">
-                <div class="grid-2">
-                  <div>
-                    <div class="field">
-                      <label>Müşteri Adı</label>
-                      <input type="text" name="musteri_adi" value="{{ siparis['İSİM SOYİSİM'] }}">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
-                    <div class="field">
-                      <label>Adres</label>
-                      <textarea name="adres" rows="4" style="font-family:inherit;">{{ siparis.ADRES }}</textarea>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#siparis" type="button">Sipariş Kaydet</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#guncelle" type="button">Sipariş Güncelle</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#siparisler" type="button">Siparişleri Göster</button>
+            </li>
+            <li class="nav-item" role="presentation"></li>
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#toplu-sil" type="button">Siparişlerin Tümünü Sil</button>
+            </li>            
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- Sipariş Tab -->
+            <div class="tab-pane fade show active" id="siparis">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Yeni Sipariş</h3>
                     </div>
-                    <div class="field">
-                      <label>İlçe</label>
-                      <input type="text" name="ilce" value="{{ siparis.İLÇE }}">
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('index') }}">
+                            <input type="hidden" name="action" value="yeni_siparis">
+                            <div class="mb-3">
+                                <textarea 
+                                    class="form-control" 
+                                    id="text_input" 
+                                    name="text_input" 
+                                    rows="8" 
+                                    placeholder="Bilgileri buraya yazınız..."
+                                    required>{% if form_data %}{{ form_data }}{% endif %}</textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary">Siparişi Kaydet</button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="field">
-                      <label>İl</label>
-                      <input type="text" name="il" value="{{ siparis.İL }}">
-                    </div>
-                  </div>
-                  <div>
-                    <div class="field">
-                      <label>Telefon</label>
-                      <input type="text" name="telefon" value="{{ siparis.TELEFON }}">
-                    </div>
-                    <div class="field">
-                      <label>Ücret</label>
-                      <input type="text" name="ucret" value="{{ siparis.TUTAR }}">
-                    </div>
-                    <div class="field">
-                      <label>Ürün Bilgisi</label>
-                      <textarea name="urun" rows="6" style="font-family:inherit;">{{ siparis.ÜRÜN }}</textarea>
-                    </div>
-                  </div>
                 </div>
-                <div class="btn-row">
-                  <button type="submit" class="btn btn-amber btn-sm">Güncelle</button>
-                  <button type="button" class="btn btn-rose btn-sm"
-                          onclick="if(confirm('Bu siparişi silmek istediğinizden emin misiniz?')) document.getElementById('silForm{{ siparis.id }}').submit();">
-                    Sil
-                  </button>
-                </div>
-              </form>
-              <form id="silForm{{ siparis.id }}" method="POST" action="{{ url_for('index') }}" style="display:none;">
-                <input type="hidden" name="action" value="sil_siparis">
-                <input type="hidden" name="siparis_id" value="{{ siparis.id }}">
-              </form>
             </div>
-          </details>
-          {% endfor %}
-        {% else %}
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 20h4L19 9l-4-4L4 16v4Z" stroke-width="1.5" stroke-linejoin="round"/></svg>
-            <p>Güncellenecek sipariş bulunmamaktadır.</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
 
-    <!-- ============ PANEL: SİPARİŞLER ============ -->
-    <div class="panel" id="panel-siparisler">
-      <div class="page-head">
-        <div class="eyebrow">Liste</div>
-        <h2>Tüm siparişler</h2>
-        <p>Detay için bir satıra tıkla.</p>
-      </div>
+            <!-- Güncelleme Tab -->
+            <div class="tab-pane fade" id="guncelle">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Sipariş Güncelle</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if siparisler_guncelleme %}
+                            <div class="accordion" id="siparisAccordion">
+                                {% for siparis in siparisler_guncelleme %}
+                                <div class="accordion-item mb-2">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#collapse{{ siparis.id }}">
+                                            <div class="d-flex align-items-center w-100">
+                                                <input type="radio" name="siparis_select" class="form-check-input me-3" 
+                                                       value="{{ siparis.id }}">
+                                                <span>{{ siparis['İSİM SOYİSİM'] }}</span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ siparis.id }}" class="accordion-collapse collapse" 
+                                         data-bs-parent="#siparisAccordion">
+                                        <div class="accordion-body">
+                                            <form method="POST" action="{{ url_for('index') }}">
+                                                <input type="hidden" name="action" value="guncelle_siparis">
+                                                <input type="hidden" name="siparis_id" value="{{ siparis.id }}">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Müşteri Adı:</label>
+                                                            <input type="text" class="form-control" name="musteri_adi" 
+                                                                   value="{{ siparis['İSİM SOYİSİM'] }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Adres:</label>
+                                                            <textarea class="form-control" name="adres" 
+                                                                      style="min-height: 60px; font-size: 16px;"
+                                                                      rows="4">{{ siparis.ADRES }}</textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">İlçe:</label>
+                                                            <input type="text" class="form-control" name="ilce" 
+                                                                   value="{{ siparis.İLÇE }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">İl:</label>
+                                                            <input type="text" class="form-control" name="il" 
+                                                                   value="{{ siparis.İL }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Telefon:</label>
+                                                            <input type="text" class="form-control" name="telefon" 
+                                                                   value="{{ siparis.TELEFON }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ücret:</label>
+                                                            <input type="text" class="form-control" name="ucret" 
+                                                                   value="{{ siparis.TUTAR }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ürün Bilgisi:</label>
+                                                            <textarea class="form-control" name="urun" 
+                                                                      style="min-height: 150px; font-size: 16px;"
+                                                                      rows="6">{{ siparis.ÜRÜN }}</textarea>
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-center gap-2 mt-3">
+                                                    <button type="submit" class="btn btn-primary" style="width: auto; min-width: 100px;">Güncelle</button>
+                                                    
+                                                    <button type="button" class="btn btn-danger" style="width: auto; min-width: 100px;"
+                                                            onclick="if(confirm('Bu siparişi silmek istediğinizden emin misiniz?')) document.getElementById('silForm{{ siparis.id }}').submit();">
+                                                        Sil
+                                                    </button>
+                                                </div>
+                                            </form>
 
-      <div class="card">
-        <div class="card-header-row">
-          <h3>Mevcut Siparişler <span class="count-badge">{{ siparisler|length }}</span></h3>
-          <div class="search-bar">
-            <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke-width="1.8"/><path d="M21 21l-4.3-4.3" stroke-width="1.8" stroke-linecap="round"/></svg>
-            <input type="text" id="siparisArama" placeholder="Sipariş ara..." onkeyup="filtreleListe('siparisArama','siparis-satir')">
-          </div>
+                                            <!-- Silme için gizli form -->
+                                            <form id="silForm{{ siparis.id }}" method="POST" action="{{ url_for('index') }}" style="display: none;">
+                                                <input type="hidden" name="action" value="sil_siparis">
+                                                <input type="hidden" name="siparis_id" value="{{ siparis.id }}">
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p class="text-center">Güncellenecek sipariş bulunmamaktadır.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toplu Silme Tab -->
+            <div class="tab-pane fade" id="toplu-sil">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">Tüm Siparişleri Sil</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <form method="POST" action="{{ url_for('index') }}">
+                            <input type="hidden" name="action" value="toplu_sil">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tüm siparişleri silmek istediğinizden emin misiniz?')">
+                                Tüm Siparişleri Sil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Siparişler Tab -->
+            <div class="tab-pane fade" id="siparisler">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Mevcut Siparişler</h3>
+                        <div class="input-group" style="max-width: 300px;">
+                            <input type="text" class="form-control" id="siparisArama" 
+                                   placeholder="Sipariş ara..." onkeyup="siparisleriFiltrele()">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        {% if siparisler %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="width: 50px;">#</th>
+                                            <th>Müşteri Adı</th>
+                                            <th>Adres</th>
+                                            <th>İl/İlçe</th>
+                                            <th>Telefon</th>
+                                            <th>Ücret</th>
+                                            <th style="width: 100px;">İşlem</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for siparis in siparisler %}
+                                        <tr class="align-middle siparis-satir">
+                                            <td class="text-center">{{ loop.index }}</td>
+                                            <td class="fw-medium">{{ siparis['İSİM SOYİSİM'] }}</td>
+                                            <td>
+                                                <div class="text-truncate" style="max-width: 250px;" 
+                                                     title="{{ siparis.ADRES }}">
+                                                    {{ siparis.ADRES }}
+                                                </div>
+                                            </td>
+                                            <td>{{ siparis.İLÇE }}/{{ siparis.İL }}</td>
+                                            <td>{{ siparis.TELEFON }}</td>
+                                            <td class="fw-medium text-primary">{{ siparis.TUTAR }}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary px-3" 
+                                                        onclick="detayGoster({{ loop.index - 1 }})">
+                                                    Detay
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <p class="text-center py-4">Henüz sipariş bulunmamaktadır.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Detay Modal -->
+                <div class="modal fade" id="siparisDetayModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Sipariş Detayı</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h6 class="detay-musteri"></h6>
+                                    <span class="badge bg-primary detay-ucret"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="fw-bold">Adres:</label>
+                                    <p class="detay-adres mb-1"></p>
+                                    <small class="text-muted detay-il-ilce"></small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="fw-bold">Telefon:</label>
+                                    <p class="detay-telefon"></p>
+                                </div>
+                                <div>
+                                    <label class="fw-bold">Ürün Bilgileri:</label>
+                                    <p class="detay-urun"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {% if siparisler %}
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:40px;">#</th>
-                <th>Müşteri</th>
-                <th>Adres</th>
-                <th>İlçe/İl</th>
-                <th>Telefon</th>
-                <th>Ücret</th>
-                <th style="width:80px;"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for siparis in siparisler %}
-              <tr class="siparis-satir">
-                <td class="mono" style="color:var(--text-dim);">{{ loop.index }}</td>
-                <td class="td-name">{{ siparis['İSİM SOYİSİM'] }}</td>
-                <td class="td-addr" title="{{ siparis.ADRES }}">{{ siparis.ADRES }}</td>
-                <td>{{ siparis.İLÇE }}/{{ siparis.İL }}</td>
-                <td class="mono">{{ siparis.TELEFON }}</td>
-                <td class="td-amount">{{ siparis.TUTAR }}</td>
-                <td><button class="btn btn-ghost btn-sm" onclick="detayGoster({{ loop.index - 1 }})">Detay</button></td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        {% else %}
-          <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h10" stroke-width="1.5" stroke-linecap="round"/></svg>
-            <p>Henüz sipariş bulunmamaktadır.</p>
-          </div>
-        {% endif %}
-      </div>
     </div>
 
-    <!-- ============ PANEL: TOPLU SİL ============ -->
-    <div class="panel" id="panel-toplu-sil">
-      <div class="page-head">
-        <div class="eyebrow">Dikkat</div>
-        <h2>Tüm siparişleri kapat</h2>
-      </div>
-      <div class="card danger-zone">
-        <div class="card-body">
-          <svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 3.9 2.6 17a1.8 1.8 0 0 0 1.5 2.7h15.8a1.8 1.8 0 0 0 1.5-2.7L13.7 3.9a1.8 1.8 0 0 0-3.4 0Z" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          <h3>Bu işlem geri alınamaz</h3>
-          <p>Bekleyen listedeki <b>{{ siparisler|length }}</b> sipariş "yazdırıldı" olarak işaretlenip listeden kaldırılacak. Kayıtlar veritabanından silinmez.</p>
-          <form method="POST" action="{{ url_for('index') }}">
-            <input type="hidden" name="action" value="toplu_sil">
-            <button type="submit" class="btn btn-rose" onclick="return confirm('Tüm siparişleri silmek istediğinizden emin misiniz?')">
-              Tüm Siparişleri Sil
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </main>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Tab değiştiğinde verileri güncelle
+        document.querySelectorAll('.nav-link').forEach(tab => {
+            tab.addEventListener('click', function() {
+                if (this.getAttribute('data-bs-target') === '#siparisler' || 
+                    this.getAttribute('data-bs-target') === '#guncelle') {
+                    refreshData();
+                }
+            });
+        });
 
-<!-- ============ DETAIL MODAL ============ -->
-<div class="modal-overlay" id="detayModal" onclick="if(event.target===this) kapatDetay()">
-  <div class="modal-panel">
-    <div class="modal-top">
-      <h3>Sipariş Detayı</h3>
-      <button class="modal-close" onclick="kapatDetay()" aria-label="Kapat">&times;</button>
-    </div>
-    <div class="t-row"><span class="k">Müşteri</span><span class="v" id="dt-musteri"></span></div>
-    <div class="t-row"><span class="k">Ücret</span><span class="v mono" id="dt-ucret"></span></div>
-    <div class="t-row"><span class="k">Adres</span><span class="v" id="dt-adres"></span></div>
-    <div class="t-row"><span class="k">İlçe / İl</span><span class="v" id="dt-ililce"></span></div>
-    <div class="t-row"><span class="k">Telefon</span><span class="v mono" id="dt-telefon"></span></div>
-    <div class="t-row"><span class="k">Ürün</span><span class="v" id="dt-urun" style="white-space:pre-wrap;"></span></div>
-  </div>
-</div>
+        // Verileri yenile
+        function refreshData() {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Siparişler tablosunu güncelle
+                    const siparislerTab = doc.querySelector('#siparisler');
+                    if (siparislerTab) {
+                        document.querySelector('#siparisler').innerHTML = siparislerTab.innerHTML;
+                    }
+                    
+                    // Güncelleme tablosunu güncelle
+                    const guncelleTab = doc.querySelector('#guncelle');
+                    if (guncelleTab) {
+                        document.querySelector('#guncelle').innerHTML = guncelleTab.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Veri yenileme hatası:', error));
+        }
 
-<script>
-// ---- Panel switching ----
-function showPanel(name, btn){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-'+name).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+        // Her 30 saniyede bir verileri otomatik yenile
+        function autoRefreshControl() {
+            const activeTab = document.querySelector('.nav-link.active');
+    
+        if (activeTab) {
+        const target = activeTab.getAttribute('data-bs-target');
+
+        // Güncelleme sekmesi açıkken yenileme yapma
+            if (target === '#guncelle') {
+                return;
+        }
+    }
+
+        refreshData();
 }
 
-// ---- List search filter (reusable) ----
-function filtreleListe(inputId, rowClass){
-  const aranan = document.getElementById(inputId).value.toLowerCase();
-  Array.from(document.getElementsByClassName(rowClass)).forEach(row=>{
-    row.style.display = row.textContent.toLowerCase().includes(aranan) ? '' : 'none';
-  });
-}
+    // 50 saniyede bir kontrol et
+    setInterval(autoRefreshControl, 50000);
 
-// ---- Live ticket preview ----
-function fisiGuncelle(text){
-  const lines = text.split('\n');
-  const get = i => (lines[i]||'').trim();
+        // Siparişleri filtrele
+        function siparisleriFiltrele() {
+            const aranan = document.getElementById('siparisArama').value.toLowerCase();
+            const satirlar = document.getElementsByClassName('siparis-satir');
+            
+            Array.from(satirlar).forEach(satir => {
+                const icerik = satir.textContent.toLowerCase();
+                satir.style.display = icerik.includes(aranan) ? '' : 'none';
+            });
+        }
 
-  const isim = get(0);
-  const adres = get(1);
-  const ilceIl = get(2).split(/\s+/).filter(Boolean);
-  const il = ilceIl.length ? ilceIl[ilceIl.length-1] : '';
-  const ilce = ilceIl.slice(0,-1).join(' ');
-  const telefon = get(3).replace(/\s+/g,'');
-  const ucretRaw = get(4).replace(/tl/ig,'').trim();
-  const urun = lines.slice(6).join('\n').trim();
+        // Detayı göster
+        function detayGoster(index) {
+            const siparisler = {{ siparisler|tojson|safe }};
+            const siparis = siparisler[index];
+            
+            document.querySelector('.detay-musteri').textContent = siparis['İSİM SOYİSİM'];
+            document.querySelector('.detay-ucret').textContent = siparis['TUTAR'];
+            document.querySelector('.detay-adres').textContent = siparis['ADRES'];
+            document.querySelector('.detay-il-ilce').textContent = `${siparis['İLÇE']}/${siparis['İL']}`;
+            document.querySelector('.detay-telefon').textContent = siparis['TELEFON'];
+            document.querySelector('.detay-urun').textContent = siparis['ÜRÜN'];
+            
+            const modal = new bootstrap.Modal(document.getElementById('siparisDetayModal'));
+            modal.show();
+        }
 
-  const setField = (id, val, transform) => {
-    const el = document.getElementById(id);
-    if(val){ el.textContent = transform ? transform(val) : val; el.classList.remove('empty'); }
-    else { el.textContent = '—'; el.classList.add('empty'); }
-  };
-
-  document.getElementById('tk-name').textContent = isim || '—';
-  setField('tk-adres', adres);
-  setField('tk-ilceil', (ilce && il) ? (ilce+' / '+il) : '');
-  setField('tk-tel', telefon);
-  setField('tk-ucret', ucretRaw, v => v + ' TL');
-  setField('tk-urun', urun);
-
-  const hazir = isim && telefon.length === 11 && ucretRaw && ilce && il;
-  const pill = document.getElementById('tk-status');
-  if(hazir){ pill.textContent='Hazır'; pill.classList.add('ready'); }
-  else { pill.textContent='Bekliyor'; pill.classList.remove('ready'); }
-}
-fisiGuncelle(document.getElementById('text_input').value);
-
-// ---- Detail modal ----
-const siparisData = {{ siparisler|tojson|safe }};
-function detayGoster(index){
-  const s = siparisData[index];
-  document.getElementById('dt-musteri').textContent = s['İSİM SOYİSİM'];
-  document.getElementById('dt-ucret').textContent = s['TUTAR'];
-  document.getElementById('dt-adres').textContent = s['ADRES'];
-  document.getElementById('dt-ililce').textContent = s['İLÇE'] + ' / ' + s['İL'];
-  document.getElementById('dt-telefon').textContent = s['TELEFON'];
-  document.getElementById('dt-urun').textContent = s['ÜRÜN'];
-  document.getElementById('detayModal').classList.add('open');
-}
-function kapatDetay(){ document.getElementById('detayModal').classList.remove('open'); }
-document.addEventListener('keydown', e => { if(e.key==='Escape') kapatDetay(); });
-
-// ---- Auto-dismiss toasts ----
-document.querySelectorAll('.toast').forEach(t=>{
-  setTimeout(()=>{ t.style.transition='opacity .4s'; t.style.opacity='0'; setTimeout(()=>t.remove(),400); }, 5000);
-});
-
-// ---- Background auto-refresh (siparişler & güncelleme listeleri) ----
-function refreshData(){
-  const activeTab = document.querySelector('.tab-btn.active')?.dataset.panel;
-  if(activeTab === 'guncelle') return; // düzenlerken üzerine yazma
-  fetch(window.location.href).then(r=>r.text()).then(html=>{
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    ['panel-siparisler','panel-guncelle'].forEach(id=>{
-      const fresh = doc.getElementById(id);
-      const current = document.getElementById(id);
-      if(fresh && current) current.innerHTML = fresh.innerHTML;
-    });
-  }).catch(err=>console.error('Yenileme hatası:', err));
-}
-setInterval(refreshData, 50000);
-</script>
+        // Flash mesajlarını otomatik gizle
+        document.addEventListener('DOMContentLoaded', function() {
+            var alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    var fadeEffect = setInterval(function () {
+                        if (!alert.style.opacity) {
+                            alert.style.opacity = 1;
+                        }
+                        if (alert.style.opacity > 0) {
+                            alert.style.opacity -= 0.1;
+                        } else {
+                            clearInterval(fadeEffect);
+                            alert.style.display = 'none';
+                        }
+                    }, 50);
+                }, 5000); // 3 saniye sonra kaybolmaya başlar
+            });
+        });
+    </script>
 </body>
-</html>
+</html> 
