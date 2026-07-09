@@ -240,7 +240,6 @@ def index():
                             "BOY": "15",
                             "YÜKSEKLİK": "10",
                             "siparis_durumu": "1",
-                            "onay_profil":"tel7"
                         }
                         
                         try:
@@ -352,5 +351,4 @@ def index():
 if __name__ == '__main__':
     app.run(debug=True)  # Debug modu açık
     
-
 
